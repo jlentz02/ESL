@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environments
+.env
+.venv/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Data (keep raw data out of Git)
+data/raw/
+data/interim/
+*.csv
+*.parquet
+
+# Outputs
+outputs/
+figures/
+
+# OS
+.DS_Store

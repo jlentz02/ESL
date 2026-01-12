@@ -4,6 +4,17 @@
 #of statistical models. If possible, I will try to implement linear algebra methods 
 #and gradient descent approaches (and others if I find them). 
 
+#Notes
+#1/10/2026
+#-It has just dawned on me that this credit default data set is
+#a binary classification task. As such, we need a method for assigning
+#the linear models best guess to 0 or 1. Per ESL, we would assign one column of Y
+#to each class and then take the argmax of the prediction. So, I need a function for
+#converting the data. 
+#-Add functionality for training and test data seperation
+#-
+
+
 #Imports
 import numpy as np
 import matplotlib.pyplot as plt
@@ -27,15 +38,14 @@ def MSE(x ,y, beta):
     return mse
 
 #Basic multilinear regression using linear algebra
-def multRegLinAlg(x,y):
-    x = add_ones(x)
+def OLS(x,y):
     xtx = np.matmul(x.T, x)
     xtx_inv = np.linalg.inv(xtx)
     xty = np.matmul(x.T, y)
     beta = np.matmul(xtx_inv, xty)
 
-    mse = round(MSE(x,y,beta),4)
-    print(f"MSE of standard linear regression is: {mse}")
+    #mse = round(MSE(x,y,beta),4)
+    #print(f"MSE of standard linear regression is: {mse}")
     return beta
 
 #Gradient descent method
@@ -60,13 +70,72 @@ def plotbeta(x ,y , beta):
     plt.plot(x , beta[0] + beta[1]*x, color = "green")
     plt.show()
 
-x = np.array([0,1,2,3,4,5,6,7])
-y = np.array([0,2,5,6.6,8,10,11,14])
-#x = np.array([[1,1], [2,4], [3,9]])
-#y = np.array([2,6,12])
+#Loads real data from a csv file given its name
+    #e.g. data.csv call load_data("data.csv")
+#Returns data_X -> n x p matrix of predictors
+#Returns data_y -> n x 1 matrix of targets
+#Returns columns -> 1 x p list of column names for the predictors
+def load_data(filename):
+    data = np.loadtxt(filename, delimiter = ",", dtype = str)
+    columns = data[0]
+    n = len(data)
+    data_X = np.array([data[i][1:-1].astype(float).astype(int) for i in range(1, n)])
+    data_y = np.array([data[i][-1].astype(int) for i in range(1, n)])
+    data_Y = convert_class(data_y)
+    return data_X, data_Y, columns
 
-beta_grad = oneDGradDescent(x,y)
-beta_reg = multRegLinAlg(x,y)
+#Converts binary data of 0 and 1's in a single column into two columns, one for yes
+#and one for no. For example:
+#[0 1 0] -> [[0, 1], [1, 0], [0, 1]]
+def convert_class(data_y):
+    data_Y = np.array([[0,1] if x == 0 else [1,0] for x in data_y])
+    return data_Y
+
+#Takes in data_X and prediction, computes the argmax of prediction,
+#and computes the error of the prediction: 1 - (correct labels / total)
+#TODO Add confusion matrix?
+def test(data_Y, prediction):
+    n = len(data_Y)
+    acc = 0
+    for i in range(n):
+        index = np.argmax(prediction[i])
+        if data_Y[i][index] == 1:
+            acc +=1
+    return 1 - acc/n
+
+#splits X and Y into a training (80%) and test (20%) set
+def tt_split(data_X, data_Y, split = 0.8):
+    n = len(data_X)
+    rng = np.random.default_rng(seed = 42)
+    indices = rng.permutation(n)
+
+    train_size = int(n*0.8)
+    train_idx = indices[:train_size]
+    test_idx = indices[train_size:]
+    
+    train_X, test_X = data_X[train_idx], data_X[test_idx]
+    train_Y, test_Y = data_Y[train_idx], data_Y[test_idx]
+    return train_X, train_Y, test_X, test_Y
+    
+
+#Main basically
+data_X, data_Y, columns = load_data("UCI_Credit_Card.csv")
+data_X = add_ones(data_X)
+train_X, train_Y, test_X, test_Y = tt_split(data_X, data_Y)
+
+
+beta = OLS(train_X, train_Y)
+
+train_error = test(train_Y, train_X@beta)
+train_error = round(train_error, 4)
+print(f"Train error: {train_error}")
+test_error = test(test_Y, test_X@beta)
+test_error = round(test_error, 4)
+print(f"Test error: {test_error}")
+
+
+
+
 
 
 
