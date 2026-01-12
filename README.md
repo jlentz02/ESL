@@ -8,3 +8,10 @@ I plan to work in order of the techniques as they are introduced in the book sta
 As for the structure of this repo, I do not have any firm plans yet. I will probably divide the models by chapter/theme, but the length of implementing them may alter this plan. However, none of these techniques are really too long. A standard regression is a few lines (or even one line) of numpy. 
 
 To clarify it again, the purpose of this project is for my own learning, and the purpose of the documentation is as a way to monitor my progress through the material. 
+
+## Model Performance Summary
+
+# Credit Default Data Set (Binary Classifiction)
+| Model                  | Train Error | Test Error | Comments |
+|------------------------|-------------|------------|----------|
+| OLS Linear Regression  | 0.1998      | 0.2083     | Raw features, ESL §3.2|

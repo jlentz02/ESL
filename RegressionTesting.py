@@ -4,17 +4,6 @@
 #of statistical models. If possible, I will try to implement linear algebra methods 
 #and gradient descent approaches (and others if I find them). 
 
-#Notes
-#1/10/2026
-#-It has just dawned on me that this credit default data set is
-#a binary classification task. As such, we need a method for assigning
-#the linear models best guess to 0 or 1. Per ESL, we would assign one column of Y
-#to each class and then take the argmax of the prediction. So, I need a function for
-#converting the data. 
-#-Add functionality for training and test data seperation
-#-
-
-
 #Imports
 import numpy as np
 import matplotlib.pyplot as plt
@@ -62,9 +51,11 @@ def oneDGradDescent(x,y):
     print(f"MSE of 1D gradient descent is: {mse}")
     return beta
     
-#Ridge regression?
+#TODO Ridge regression
 
-#Plots 1D regression so I can see examples
+#TODO Logistic regresion using newtown updates (see page 119)
+
+#Plots 1D regression for simple examples
 def plotbeta(x ,y , beta):
     plt.scatter(x,y)
     plt.plot(x , beta[0] + beta[1]*x, color = "green")

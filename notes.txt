@@ -1,0 +1,12 @@
+Notes
+This document is for informal notes about things I have realized, or should do. 
+It will also contain results/comparisons of models as I add them.
+1/10/2026
+-It has just dawned on me that this credit default data set is
+a binary classification task. As such, we need a method for assigning
+the linear models best guess to 0 or 1. Per ESL, we would assign one column of Y
+to each class and then take the argmax of the prediction. So, I need a function for
+converting the data. 
+-DONE Add functionality for training and test data seperation
+-Add ridge regression and logisitc regression and compare to OLS
+-OLS: Train error: 0.1998  -  Test error: 0.2083
