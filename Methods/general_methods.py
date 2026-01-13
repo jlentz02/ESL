@@ -70,7 +70,7 @@ def tt_split(data_X, data_Y, split = 0.8):
     rng = np.random.default_rng(seed = 42)
     indices = rng.permutation(n)
 
-    train_size = int(n*0.8)
+    train_size = int(n*split)
     train_idx = indices[:train_size]
     test_idx = indices[train_size:]
     
@@ -78,6 +78,7 @@ def tt_split(data_X, data_Y, split = 0.8):
     train_Y, test_Y = data_Y[train_idx], data_Y[test_idx]
     return train_X, train_Y, test_X, test_Y
     
+
 
 
 

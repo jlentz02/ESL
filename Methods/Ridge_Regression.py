@@ -23,11 +23,19 @@ def ridge_regression(x, y, k):
     return beta, x_mean, x_std, y_mean
 
 data_X, data_Y, columns = load_data("UCI_Credit_Card.csv")
-train_X, train_Y, test_X, test_Y = tt_split(data_X, data_Y)
+trainval_X, trainval_Y, test_X, test_Y = tt_split(data_X, data_Y)
+train_X, train_Y, val_X, val_Y = tt_split(trainval_X, trainval_Y, .75)
 
+beta, x_mean, x_std, y_mean = ridge_regression(train_X, train_Y, 8)
 
-beta, x_mean, x_std, y_mean = ridge_regression(train_X, train_Y, 1000)
-
-prediction = ((train_X - x_mean)/x_std)@beta + y_mean
-train_error = test(train_Y, prediction)
+train_pred = ((train_X - x_mean)/x_std)@beta + y_mean
+train_error = test(train_Y, train_pred)
 print(f"Train error: {train_error}")
+val_pred = ((val_X - x_mean)/x_std)@beta + y_mean
+val_error = test(val_Y, val_pred)
+print(f"Validation error: {val_error}")
+test_pred = ((test_X - x_mean)/x_std)@beta + y_mean
+test_error = test(test_Y, test_pred)
+print(f"Validation error: {test_error}")
+
+
