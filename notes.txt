@@ -10,3 +10,9 @@ converting the data.
 -DONE Add functionality for training and test data seperation
 -Add ridge regression and logisitc regression and compare to OLS
 -OLS: Train error: 0.1998  -  Test error: 0.2083
+
+1/12/2026
+-Split off main file into a general file which will contain general funtions e.g. 
+train/test split, data loading, data cleaning, etc
+-Created methods folder to hold individual methods
+-Created OLS, ridge, and logisitic files for their individual implementations

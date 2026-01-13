@@ -43,10 +43,8 @@ train_X, train_Y, test_X, test_Y = tt_split(data_X, data_Y)
 beta = OLS(train_X, train_Y)
 
 train_error = test(train_Y, train_X@beta)
-train_error = round(train_error, 4)
 print(f"Train error: {train_error}")
 test_error = test(test_Y, test_X@beta)
-test_error = round(test_error, 4)
 print(f"Test error: {test_error}")
 
 

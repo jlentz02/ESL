@@ -62,7 +62,7 @@ def test(data_Y, prediction):
         index = np.argmax(prediction[i])
         if data_Y[i][index] == 1:
             acc +=1
-    return 1 - acc/n
+    return round(1 - acc/n,4)
 
 #splits X and Y into a training (80%) and test (20%) set
 def tt_split(data_X, data_Y, split = 0.8):
