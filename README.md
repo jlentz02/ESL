@@ -15,4 +15,5 @@ To clarify it again, the purpose of this project is for my own learning, and the
 | Model                  | Train Error | Test Error | Comments |
 |------------------------|-------------|------------|----------|
 | OLS Linear Regression  | 0.1998      | 0.2083     | Raw features, ESL §3.2|
-| Ridge Regression       | 0.1992      | 0.2072     | lambda = 8 after testing on val set
+| Ridge Regression       | 0.1992      | 0.2072     | lambda = 8 after testing on val set, ESL §3.4
+| Logisitic Regression   | 0.1893      | 0.1923     | ESL §4.4

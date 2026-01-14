@@ -26,4 +26,8 @@ relative to the amount paid each month
 I guess this is an improvement, but we can probably do better
 -I will try the above on ridge. It had no effect. 
 -TODO Lasso? 
+
+1/14
+-Got logistic regression working! I think I want to implement it again using pytorch
+gradient descent since that will be important for future methods
 -

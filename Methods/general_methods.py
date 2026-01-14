@@ -36,13 +36,14 @@ def plotbeta(x ,y , beta):
 #Returns data_X -> n x p matrix of predictors
 #Returns data_y -> n x 1 matrix of targets
 #Returns columns -> 1 x p list of column names for the predictors
-def load_data(filename):
+def load_data(filename, ysplit = True):
     data = np.loadtxt(filename, delimiter = ",", dtype = str)
     columns = data[0]
     n = len(data)
     data_X = np.array([data[i][1:-1].astype(float).astype(int) for i in range(1, n)])
-    data_y = np.array([data[i][-1].astype(int) for i in range(1, n)])
-    data_Y = convert_class(data_y)
+    data_Y = np.array([data[i][-1].astype(int) for i in range(1, n)])
+    if ysplit:
+        data_Y = convert_class(data_Y)
     return data_X, data_Y, columns
 
 #Converts binary data of 0 and 1's in a single column into two columns, one for yes
@@ -58,11 +59,18 @@ def convert_class(data_y):
 def test(data_Y, prediction):
     n = len(data_Y)
     acc = 0
-    for i in range(n):
-        index = np.argmax(prediction[i])
-        if data_Y[i][index] == 1:
-            acc +=1
-    return round(1 - acc/n,4)
+    try:
+        len(data_Y[0])
+        for i in range(n):
+            index = np.argmax(prediction[i])
+            if data_Y[i][index] == 1:
+                acc += 1
+        return round(1 - acc/n,4)
+    except:
+        for i in range(n):
+            if abs(data_Y[i] - prediction[i]) < 0.5:
+                acc += 1
+        return round(1 - acc/n,4)
 
 #splits X and Y into a training (80%) and test (20%) set
 def tt_split(data_X, data_Y, split = 0.8):
