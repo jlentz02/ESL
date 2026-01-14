@@ -16,3 +16,14 @@ converting the data.
 train/test split, data loading, data cleaning, etc
 -Created methods folder to hold individual methods
 -Created OLS, ridge, and logisitic files for their individual implementations
+
+1/13
+-Gonna try some feature engineering/basis expansions, but I don't anticipate the later to 
+have too much effect given the nature of the data. 
+-My first idea is that a good predictor of credit default would be a large balanced
+relative to the amount paid each month
+-First attempt at this train error: 0.1998 -> 0.2028 and test error: 0.2083 -> 0.208. 
+I guess this is an improvement, but we can probably do better
+-I will try the above on ridge. It had no effect. 
+-TODO Lasso? 
+-

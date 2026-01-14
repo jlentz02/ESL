@@ -35,10 +35,11 @@ def oneDGradDescent(x,y):
 
 
 #Main basically
+
+#Raw data
 data_X, data_Y, columns = load_data("UCI_Credit_Card.csv")
 data_X = add_ones(data_X)
 train_X, train_Y, test_X, test_Y = tt_split(data_X, data_Y)
-
 
 beta = OLS(train_X, train_Y)
 
@@ -47,6 +48,19 @@ print(f"Train error: {train_error}")
 test_error = test(test_Y, test_X@beta)
 print(f"Test error: {test_error}")
 
+#Feature engineering / basis expansions
+#This stuff is hard
+monthly_repayment_ratio = np.log(np.abs(data_X[:, 12:18] + 1e-8) / np.abs(data_X[:, 18:24] + 1e-8))
+X_aug = np.column_stack([data_X, monthly_repayment_ratio])
+
+train_X_aug, train_Y, test_X_aug, test_Y = tt_split(X_aug, data_Y)
+
+beta_aug = OLS(train_X_aug, train_Y)
+
+train_error_aug = test(train_Y, train_X_aug@beta_aug)
+print(f"Augmented train error: {train_error_aug}")
+test_error_aug = test(test_Y, test_X_aug@beta_aug)
+print(f"Augemented test error: {test_error_aug}")
 
 
 

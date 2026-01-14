@@ -11,7 +11,7 @@ To clarify it again, the purpose of this project is for my own learning, and the
 
 # Model Performance Summary
 
-## Credit Default Data Set (Binary Classifiction)
+## Credit Default Data Set (Binary Classification)
 | Model                  | Train Error | Test Error | Comments |
 |------------------------|-------------|------------|----------|
 | OLS Linear Regression  | 0.1998      | 0.2083     | Raw features, ESL §3.2|
