@@ -5,15 +5,16 @@
 #Imports
 import numpy as np
 import matplotlib.pyplot as plt
+import torch
 from general_methods import load_data, add_ones, tt_split, test, MSE
 
 
 #Basic multilinear regression using linear algebra
 def OLS(x,y):
-    xtx = np.matmul(x.T, x)
-    xtx_inv = np.linalg.inv(xtx)
-    xty = np.matmul(x.T, y)
-    beta = np.matmul(xtx_inv, xty)
+    xtx = torch.matmul(x.T, x)
+    xtx_inv = torch.linalg.inv(xtx)
+    xty = torch.matmul(x.T, y)
+    beta = torch.matmul(xtx_inv, xty)
 
     #mse = round(MSE(x,y,beta),4)
     #print(f"MSE of standard linear regression is: {mse}")
@@ -21,6 +22,7 @@ def OLS(x,y):
 
 #Gradient descent method
 #y intercept must be 0
+#I wrote this on the plane deriving the equations from scratch. 
 def oneDGradDescent(x,y):
     beta_0 = 0
     beta = 1
@@ -32,6 +34,8 @@ def oneDGradDescent(x,y):
     mse = round(MSE(x,y, beta),4)
     print(f"MSE of 1D gradient descent is: {mse}")
     return beta
+
+
 
 
 #Main basically
@@ -50,8 +54,8 @@ print(f"Test error: {test_error}")
 
 #Feature engineering / basis expansions
 #This stuff is hard
-monthly_repayment_ratio = np.log(np.abs(data_X[:, 12:18] + 1e-8) / np.abs(data_X[:, 18:24] + 1e-8))
-X_aug = np.column_stack([data_X, monthly_repayment_ratio])
+monthly_repayment_ratio = torch.log(torch.abs(data_X[:, 12:18] + 1e-8) / torch.abs(data_X[:, 18:24] + 1e-8))
+X_aug = torch.column_stack([data_X, monthly_repayment_ratio])
 
 train_X_aug, train_Y, test_X_aug, test_Y = tt_split(X_aug, data_Y)
 

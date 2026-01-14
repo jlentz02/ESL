@@ -2,30 +2,31 @@
 
 import numpy as np
 from general_methods import *
-#Shouldn't need pytorch since it is binary
+import torch
 
 def sigmoid(X, beta):
-    return 1/(1 + np.exp(-X@beta))
+    return 1/(1 + torch.exp(-X@beta))
 
 #Logistic regression (two classes) using linear algebra for Newton update
 def logistic_regression(X, Y, threshold = 0.001):
     n = len(X[0])
-    beta_old = np.ones(n)
-    beta = np.zeros(n)
+    beta_old = torch.ones(n)
+    beta = torch.zeros(n)
 
-    while np.sum(np.abs(beta_old - beta)) > threshold:
+    while torch.sum(torch.abs(beta_old - beta)) > threshold:
         p = sigmoid(X, beta)
-        W = np.diag(p*(1-p))
-        xtwx = np.transpose(X)@W@X
-        xtwx_inv = np.linalg.inv(xtwx)
+        W = torch.diag(p*(1-p))
+        xtwx = torch.transpose(X, 0, 1)@W@X
+        xtwx_inv = torch.linalg.inv(xtwx)
         beta_old = beta
-        beta = beta + (xtwx_inv@np.transpose(X))@(Y - p)
+        beta = beta + (xtwx_inv@torch.transpose(X, 0, 1))@(Y - p)
 
     return beta
 
 #Logistic regression using pytorch autograd
+#TODO
 def log_regression_grad(X, Y, threshold):
-    print("hi")
+    return
 
 
 data_X, data_Y, columns = load_data("UCI_Credit_Card.csv", ysplit = False)

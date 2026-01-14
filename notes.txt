@@ -30,4 +30,7 @@ I guess this is an improvement, but we can probably do better
 1/14
 -Got logistic regression working! I think I want to implement it again using pytorch
 gradient descent since that will be important for future methods
--
+-I am actually going to start with OLS using gradient descent
+-Seems like I should just rewrite everything to use pytorch tensors
+-Updated load_data, add_ones, MSE, convert_class, tt_split still works
+-I think I am done with the refactor

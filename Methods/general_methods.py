@@ -4,24 +4,27 @@
 
 #Imports
 import numpy as np
+import csv
+import torch
 import matplotlib.pyplot as plt
 
 #Functions
-#Add ones: Adds a row of ones to the data set X -> n x p makes X -> n x (p+1)
+#Add ones: Adds a column of ones to the data set X -> n x p makes X -> n x (p+1)
 def add_ones(x):
     if x.ndim == 1:
         x = x.reshape(-1 ,1)
-    ones = np.ones((x.shape[0], 1))
-    x_new = np.hstack((ones, x))
+    ones = torch.ones((x.shape[0], 1))
+    x_new = torch.hstack((ones, x))
+   
     return x_new
 
 #Computes MSE
 def MSE(x ,y, beta):
     try:
         len(beta)
-        mse = np.sum((y - x@beta)**2)
+        mse = torch.sum((y - x@beta)**2)
     except:
-        mse = np.sum((y - beta*x)**2)
+        mse = torch.sum((y - beta*x)**2)
     return mse
 
 
@@ -37,11 +40,12 @@ def plotbeta(x ,y , beta):
 #Returns data_y -> n x 1 matrix of targets
 #Returns columns -> 1 x p list of column names for the predictors
 def load_data(filename, ysplit = True):
+    
     data = np.loadtxt(filename, delimiter = ",", dtype = str)
     columns = data[0]
     n = len(data)
-    data_X = np.array([data[i][1:-1].astype(float).astype(int) for i in range(1, n)])
-    data_Y = np.array([data[i][-1].astype(int) for i in range(1, n)])
+    data_X = torch.tensor(np.array([data[i][1:-1].astype(float).astype(int) for i in range(1, n)]), dtype = torch.float32)
+    data_Y = torch.tensor(np.array([data[i][-1].astype(int) for i in range(1, n)]), dtype = torch.float32)
     if ysplit:
         data_Y = convert_class(data_Y)
     return data_X, data_Y, columns
@@ -50,7 +54,7 @@ def load_data(filename, ysplit = True):
 #and one for no. For example:
 #[0 1 0] -> [[0, 1], [1, 0], [0, 1]]
 def convert_class(data_y):
-    data_Y = np.array([[0,1] if x == 0 else [1,0] for x in data_y])
+    data_Y = torch.tensor([[0,1] if x == 0 else [1,0] for x in data_y], dtype = torch.float32)
     return data_Y
 
 #Takes in data_X and prediction, computes the argmax of prediction,
@@ -59,13 +63,15 @@ def convert_class(data_y):
 def test(data_Y, prediction):
     n = len(data_Y)
     acc = 0
+    #For OLS predictions
     try:
         len(data_Y[0])
         for i in range(n):
-            index = np.argmax(prediction[i])
+            index = torch.argmax(prediction[i])
             if data_Y[i][index] == 1:
                 acc += 1
         return round(1 - acc/n,4)
+    #for logistic regression 
     except:
         for i in range(n):
             if abs(data_Y[i] - prediction[i]) < 0.5:

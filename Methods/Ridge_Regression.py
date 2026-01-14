@@ -9,16 +9,16 @@ from general_methods import *
 def ridge_regression(x, y, k):
     #making data mean 0, unit variance
     x_mean = x.mean(axis = 0)
-    x_std = x.std(axis = 0, ddof = 1)
+    x_std = x.std(axis = 0, correction = 1)
     x = (x - x_mean)/x_std
     y_mean = y.mean(axis = 0)
     y = y - y_mean
     
 
-    xtx_kI = np.matmul(x.T, x) + k*np.identity(len(x[0]))
-    xtx_kI_inv = np.linalg.inv(xtx_kI)
-    xty = np.matmul(x.T, y)
-    beta = np.matmul(xtx_kI_inv, xty)
+    xtx_kI = torch.matmul(x.T, x) + k*torch.eye(len(x[0]))
+    xtx_kI_inv = torch.linalg.inv(xtx_kI)
+    xty = torch.matmul(x.T, y)
+    beta = torch.matmul(xtx_kI_inv, xty)
 
     return beta, x_mean, x_std, y_mean
 
