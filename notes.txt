@@ -33,4 +33,4 @@ gradient descent since that will be important for future methods
 -I am actually going to start with OLS using gradient descent
 -Seems like I should just rewrite everything to use pytorch tensors
 -Updated load_data, add_ones, MSE, convert_class, tt_split still works
--I think I am done with the refactor
+-I think I am done with the refactor since all prior methods work correctly

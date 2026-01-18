@@ -36,8 +36,6 @@ def oneDGradDescent(x,y):
     return beta
 
 
-
-
 #Main basically
 
 #Raw data

@@ -25,8 +25,18 @@ def logistic_regression(X, Y, threshold = 0.001):
 
 #Logistic regression using pytorch autograd
 #TODO
-def log_regression_grad(X, Y, threshold):
-    return
+def logistic_regression_grad(X, Y, lr = 0.001):
+    beta = torch.zeros((len(X[0])), requires_grad=True)
+    optimizer = torch.optim.Adam([beta], lr = lr)
+    for step in range(1000):
+        #loss isn't correct
+        loss_fn = torch.nn.BCEWithLogitsLoss()
+        loss = loss_fn(X@beta, Y)
+        loss.backward()
+        optimizer.step()
+        optimizer.zero_grad()
+    return beta
+
 
 
 data_X, data_Y, columns = load_data("UCI_Credit_Card.csv", ysplit = False)
@@ -34,7 +44,8 @@ data_X, data_Y, columns = load_data("UCI_Credit_Card.csv", ysplit = False)
 data_X = add_ones(data_X)
 train_X, train_Y, test_X, test_Y = tt_split(data_X, data_Y)
 
-beta = logistic_regression(train_X, train_Y)
+beta = logistic_regression_grad(train_X, train_Y)
+
 
 train_pred = sigmoid(train_X, beta)
 train_error = test(train_Y, train_pred)
