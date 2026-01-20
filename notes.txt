@@ -34,3 +34,15 @@ gradient descent since that will be important for future methods
 -Seems like I should just rewrite everything to use pytorch tensors
 -Updated load_data, add_ones, MSE, convert_class, tt_split still works
 -I think I am done with the refactor since all prior methods work correctly
+
+1/18
+-Implented logistic regression using gradient descent. It doesn't work as well
+as the Newton updates
+-Tried out quadratic basis expansion, but it sucks
+-I want to implemented general additive models, but it seems I need to implement smoothing splines first
+-See section 5.6 for B-splines, see page 151 for cubic splines, see section 9.1 for backfitting algorithm
+-I am going to generate some artificial data to test the spline method on
+-See appendix 186 for basis for splines
+
+1/20
+-Implementing B-splines is challenging, but I am getting there.

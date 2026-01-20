@@ -1,7 +1,7 @@
 #Logistic Regression
 
 import numpy as np
-from general_methods import *
+from General_methods import *
 import torch
 
 def sigmoid(X, beta):

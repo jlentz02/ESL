@@ -6,7 +6,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
-from general_methods import load_data, add_ones, tt_split, test, MSE
+from General_methods import load_data, add_ones, tt_split, test, MSE
 
 
 def OLS_grad(x,y, lr = 0.01):

@@ -4,7 +4,6 @@
 
 #Imports
 import numpy as np
-import csv
 import torch
 import matplotlib.pyplot as plt
 
@@ -91,7 +90,32 @@ def tt_split(data_X, data_Y, split = 0.8):
     train_X, test_X = data_X[train_idx], data_X[test_idx]
     train_Y, test_Y = data_Y[train_idx], data_Y[test_idx]
     return train_X, train_Y, test_X, test_Y
+
+
+#Takes data, X, with p columns and produces the basis expansion X_iX_j
+def expand_basis(X):
+    n, p = X.shape
+    output = torch.ones([n, int(p*(p+1)/2)])
+    col = 0
+    for i in range(p):
+        for j in range(i,p):
+            output[:, col] = X[:, i]*X[:, j]
+            col += 1
+    return output
     
+
+#Generates data that is a sine function with gaussian noise
+#Returns X and Y_noisy
+def generate_sine_data(points = 100):
+    X = torch.tensor([8/points*i for i in range(points)])
+    Y = torch.sin(X)
+    Y_noisy = torch.normal(Y, 0.1)    
+    
+    #Graphing to check the amount of noise
+    #plt.scatter(X ,Y_noisy)
+    #plt.plot(X, Y, color = "green")
+    #plt.show()
+    return X, Y_noisy
 
 
 

@@ -1,9 +1,9 @@
 #Ridge Regression
 
 import numpy as np
-from general_methods import *
+import torch
+from General_methods import *
 
-#TODO Ridge regression
 #Using k as tuning parameter
 #Need to center data before doing this
 def ridge_regression(x, y, k):
