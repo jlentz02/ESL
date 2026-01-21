@@ -7,8 +7,6 @@ import matplotlib.pyplot as plt
 from General_methods import generate_sine_data
 
 
-#main
-X, Y = generate_sine_data()
 
 #Computes the value of B_i_k(x) for a list of knots t
 #x is the value the spline will be evaluated at
@@ -36,7 +34,6 @@ def B(x, k, i, t):
     return c1 + c2
 
 #Computes the spline function
-#This won't be used, the later function is more important
 def bspline(t, k, c):
     n = len(t) - k - 1
     return lambda x: sum(c[i]*B(x, k, i, t) for i in range(n))
@@ -116,18 +113,54 @@ def make_B(X, k, t):
         B[:, l] = B_vec(X, k, l, t)
     return B
 
+#Solve for gamma
+#Gets the coefficients for gamma which will make our spline fit the data
+#This is gamma = (B^TB + lam*omega)^-1B^Ty
+#Note this is a ridge regression
+def compute_gamma(B_mat, omega, lam, Y):
+    BT = torch.transpose(B_mat, 0, 1)
+    BTBlam = BT@B_mat + lam*omega
+    inv = torch.linalg.inv(BTBlam)
+    invBT = inv@BT
+    return invBT@Y
 
-        
-        
-t = [0,0.5,1,1.5,2,2.5,3]
-t = add_boundary_knots(t, 3)
+#Generates t from X using a specified number of knots
+#n knots
+def make_t(X, n):
+    low = torch.min(X)
+    high = torch.max(X)
+    t = [(low + i*(high-low)/(n)) for i in range(n+1)]
+    return t
+
+#Given X, Y, k, lam, and the number of internal knots generates the 
+#spline function approximating the data
+#PLEASE sort X and Y so that X is ascending
+def generate_spline(X, Y, k, knots, lam):
+    #Generate knots
+    t = make_t(X, knots)
+    t = add_boundary_knots(t, k)
+    #Generate B and omega
+    #TODO pass in omega to avoid recomputing
+    omega = make_omega(X, k, t)
+    B_mat = make_B(X, k, t)
+    #Does the ridge regression to find gamma
+    gamma = compute_gamma(B_mat, omega, lam, Y)
+    #Generates spline function from gamma
+    func = bspline(t, k, gamma)
+
+    return func
 
 
-X = [3*i/50 for i in range(51)]
+#main
+X, Y = generate_sine_data(100)
 
-omega = make_omega(X, 3, t)
-B_mat = make_B(X, 3, t)
+func = generate_spline(X, Y, 3, 50, 1.2)
 
+Y_hat = [func(X[i]) for i in range(len(X))]
+
+plt.scatter(X,Y)
+plt.plot(X,Y_hat, color = "green")
+plt.show()
 
 
 
