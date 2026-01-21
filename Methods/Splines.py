@@ -9,7 +9,7 @@ from General_methods import generate_sine_data
 
 
 #Computes the value of B_i_k(x) for a list of knots t
-#x is the value the spline will be evaluated at
+#X is the vector of supports for the spline
 #k is the degree of the spline
 #i is the current index
 #t is are the knots (need to add the extra knots for the ends, I think)
@@ -17,7 +17,9 @@ from General_methods import generate_sine_data
 def B(x, k, i, t):
     #Degree 1 spline
     if k == 0:
-        return 1 if t[i] <= x <= t[i+1] else 0
+        ind = torch.logical_and(t[i] <= x, x <= t[i+1])
+        ind = ind.type(torch.int)
+        return ind
     #Checks tail knots
     if t[i + k] == t[i]:
         c1 = 0
@@ -37,13 +39,6 @@ def B(x, k, i, t):
 def bspline(t, k, c):
     n = len(t) - k - 1
     return lambda x: sum(c[i]*B(x, k, i, t) for i in range(n))
-
-#Applies the B function to a whole vector X
-def B_vec(X, k, i, t):
-    output = torch.zeros(len(X))
-    for j in range(len(X)):
-        output[j] = B(X[j], k, i, t)
-    return output
 
 #Computes the derivate of B at a certain point
 #We will apply this twice to compute the second derivative.
@@ -83,8 +78,7 @@ def make_D(X, k, t):
     n = len(t) - k - 1
     D = torch.zeros([len(X), n])
     for l in range(n):
-        for j in range(len(X)):
-            D[j][l] = B_2deriv(X[j], k, l, t)
+            D[:, l] = B_2deriv(X, k, l, t)
     return D
 
 #Forms the n x n (the n as defined above) matrix D^TD*(deltat) which is our numerical 
@@ -105,13 +99,13 @@ def add_boundary_knots(t, k):
     new_t = front + t + back
     return new_t
 
-#Makes X |-> B by applying B_i to X for the i B-splines
+#Makes X |-> B_mat by applying B_i to X for the i B-splines
 def make_B(X, k, t):
     n = len(t) - k - 1
-    B = torch.zeros([len(X), n])
+    B_mat = torch.zeros([len(X), n])
     for l in range(n):
-        B[:, l] = B_vec(X, k, l, t)
-    return B
+        B_mat[:, l] = B(X, k, l, t)
+    return B_mat
 
 #Solve for gamma
 #Gets the coefficients for gamma which will make our spline fit the data
@@ -154,9 +148,11 @@ def generate_spline(X, Y, k, knots, lam):
 #main
 X, Y = generate_sine_data(100)
 
-func = generate_spline(X, Y, 3, 50, 1.2)
+order = 3
+knots = 50
+func = generate_spline(X, Y, order, knots, 0.1)
 
-Y_hat = [func(X[i]) for i in range(len(X))]
+Y_hat = func(X)
 
 plt.scatter(X,Y)
 plt.plot(X,Y_hat, color = "green")
