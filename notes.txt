@@ -46,3 +46,4 @@ as the Newton updates
 
 1/20
 -Implementing B-splines is challenging, but I am getting there.
+-Added email address to track git commits
