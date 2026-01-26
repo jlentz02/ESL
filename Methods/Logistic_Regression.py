@@ -24,7 +24,6 @@ def logistic_regression(X, Y, threshold = 0.001):
     return beta
 
 #Logistic regression using pytorch autograd
-#TODO
 def logistic_regression_grad(X, Y, lr = 0.001):
     beta = torch.zeros((len(X[0])), requires_grad=True)
     optimizer = torch.optim.Adam([beta], lr = lr)

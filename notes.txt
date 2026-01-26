@@ -47,3 +47,20 @@ as the Newton updates
 1/20
 -Implementing B-splines is challenging, but I am getting there.
 -Added email address to track git commits
+
+1/23
+-I have implemented the back fitting algorithm as described in ESL 9.1, however there are 
+issues directly related to the data I have. Namely, you cannot fit a cubic spline onto
+categorical data. I need to improve my knot generating function to better capture this 
+reality. 
+-I enjoying seeing where these methods, described in exact mathematical terms, conflict
+with the realities of data. I think being able to more adeptly handle the conversion
+from idea to implementation is one of the main reasons I started this project. 
+
+1/24
+-I've got, I think, two issues with the back fitting method at the moment. Firstly,
+the knot selection as mentioned above seems to be leading to univertable matrices.
+Secondly, my function to generate the B-splines on the data is just returning a list of
+zeroes. The latter is more pressing, but I also have no idea why. I don't believe the length
+of the data has anything to do with it based on checking against my toy example. 
+-I think I have addressed the second issue by normalizing the data before fitting the spline

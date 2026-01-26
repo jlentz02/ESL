@@ -13,7 +13,7 @@ from General_methods import generate_sine_data
 #k is the degree of the spline
 #i is the current index
 #t is are the knots (need to add the extra knots for the ends, I think)
-#Code is adapted from the scipy bspline method
+#Code is adapted from the naive scipy bspline method
 def B(x, k, i, t):
     #Degree 1 spline
     if k == 0:
@@ -84,7 +84,7 @@ def make_D(X, k, t):
 #Forms the n x n (the n as defined above) matrix D^TD*(deltat) which is our numerical 
 #approximation of omega_ij = \int N''_j(t)N''_i(t)dt
 def make_omega(X, k, t):
-    D = make_D(X, k ,t)
+    D = make_D(X, k, t)
     #Assuming your grid t is evenly spaced (it better be)
     dt = t[k+1]-t[k]
     omega = torch.transpose(D, 0, 1)@D*dt
@@ -94,9 +94,9 @@ def make_omega(X, k, t):
 def add_boundary_knots(t, k):
     if k == 0:
         return t
-    front = [t[0] for i in range(k)]
-    back = [t[-1] for i in range(k)]
-    new_t = front + t + back
+    front = torch.tensor([t[0] for i in range(k)])
+    back = torch.tensor([t[-1] for i in range(k)])
+    new_t = torch.cat([front, t, back])
     return new_t
 
 #Makes X |-> B_mat by applying B_i to X for the i B-splines
@@ -120,15 +120,20 @@ def compute_gamma(B_mat, omega, lam, Y):
 
 #Generates t from X using a specified number of knots
 #n knots
+#Updated to use a quantiles to parse the data instead
 def make_t(X, n):
-    low = torch.min(X)
-    high = torch.max(X)
-    t = [(low + i*(high-low)/(n)) for i in range(n+1)]
+    num_unique = len(torch.unique(X))
+    n = min(n, num_unique - 1)
+
+    q = torch.tensor([i/n for i in range(n+1)])
+    t = torch.quantile(X, q)
     return t
+
 
 #Given X, Y, k, lam, and the number of internal knots generates the 
 #spline function approximating the data
 #PLEASE sort X and Y so that X is ascending
+#I actually don't think the above is important
 def generate_spline(X, Y, k, knots, lam):
     #Generate knots
     t = make_t(X, knots)
@@ -144,19 +149,35 @@ def generate_spline(X, Y, k, knots, lam):
 
     return func
 
+#Alternate version of the above for when you want to precompute and reuse t and omega
+#Given X, Y, k, lam, and the number of internal knots generates the 
+#spline function approximating the data
+def generate_spline_t_omega(X, Y, k, lam, t, omega):
+    #Generate B and omega
+    B_mat = make_B(X, k, t)
+    #Does the ridge regression to find gamma
+    gamma = compute_gamma(B_mat, omega, lam, Y)
+    #Generates spline function from gamma
+    func = bspline(t, k, gamma)
+
+    return func
+
 
 #main
-X, Y = generate_sine_data(100)
+if __name__ == "__main__":
+    X, Y = generate_sine_data(100)
 
-order = 3
-knots = 50
-func = generate_spline(X, Y, order, knots, 0.1)
+    order = 3
+    knots = 5
+    func = generate_spline(X, Y, order, knots, 0.1)
 
-Y_hat = func(X)
+    #func2 = lambda x: func(x) - 1
 
-plt.scatter(X,Y)
-plt.plot(X,Y_hat, color = "green")
-plt.show()
+    Y_hat = func(X)
+
+    plt.scatter(X,Y)
+    plt.plot(X, Y_hat, color = "green")
+    plt.show()
 
 
 

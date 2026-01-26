@@ -16,7 +16,8 @@ To clarify it again, the purpose of this project is for my own learning, and the
 |------------------------|-------------|------------|----------|
 | OLS                    | 0.1999      | 0.2082     | Raw features, ESL §3.2|
 | OLS - Grad Descent     | 0.1998      | 0.2068     | Raw features, ESL §3.2|
-| Ridge Regression       | 0.1992      | 0.2072     | lambda = 8 after testing on val set, ESL §3.4
-| Logisitic Regression   | 0.1893      | 0.1923     | ESL §4.4
-| Log Reg - Grad Descent | 0.2183      | 0.2263     | ESL §4.4, a bit disappointing, Newton > GD
-| Quadratic basis        | 0.4495      | 0.4488     | ESL §5.1, not very good either
+| Ridge Regression       | 0.1992      | 0.2072     | lambda = 8 after testing on val set, ESL §3.4|
+| Logisitic Regression   | 0.1893      | 0.1923     | ESL §4.4|
+| Log Reg - Grad Descent | 0.2183      | 0.2263     | ESL §4.4, a bit disappointing, Newton > GD|
+| Quadratic basis        | 0.4495      | 0.4488     | ESL §5.1, not very good either|
+| GAM - Cubic Splines*   | 0.xxxx      | 0.xxxx     | ESL §9.1, categorical variables were not splined|

@@ -73,8 +73,11 @@ def test(data_Y, prediction):
     #for logistic regression 
     except:
         for i in range(n):
-            if abs(data_Y[i] - prediction[i]) < 0.5:
+            if prediction[i] >= 0.5 and data_Y[i] == 1:
                 acc += 1
+            elif prediction[i] < 0.5 and data_Y[i] == 0:
+                acc += 1
+            
         return round(1 - acc/n,4)
 
 #splits X and Y into a training (80%) and test (20%) set
@@ -116,6 +119,16 @@ def generate_sine_data(points = 100):
     #plt.plot(X, Y, color = "green")
     #plt.show()
     return X, Y_noisy
+
+#Takes a data matrix X and standarizes the columns to be mean 0, unit variances
+#Returns X_normed, X_means, and X_stds
+#The normalized data, the column means, and column standard deviations
+def normalize_data(X):
+    means = torch.mean(X, axis = 0)
+    stds = torch.std(X, axis = 0, correction = 1)
+    X_normed = (X - means)/stds
+
+    return X_normed, means, stds
 
 
 
