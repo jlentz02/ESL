@@ -64,3 +64,34 @@ Secondly, my function to generate the B-splines on the data is just returning a 
 zeroes. The latter is more pressing, but I also have no idea why. I don't believe the length
 of the data has anything to do with it based on checking against my toy example. 
 -I think I have addressed the second issue by normalizing the data before fitting the spline
+
+1/25
+-After much struggle, I have realize I am dumb. I have been attempting to precompute the 
+derivatives and knots to save computation time. This is a good idea, usually, but of course
+these objects depend on X! Instead of X we have loop_input = Y - alpha - sum (f(X_k) for k != j)
+and this updates every loop. 
+-The current problem is that my list of knots has too many duplicate boundary knot values. 
+The reason for this is that, when taking quantiles of clustered data, I get duplicate values.
+For example, if X = [0,0,0,0,0,1], then the 10th percentile is 0, but so is the 20th, 30th, etc.
+This leads to the function that takes the derivative returning 0. My bandaid solution is to add
+1e-16 to the list of derivatives to avoid singular matrices. It seems to work. 
+-Unfortunately, my training error is plateaued at ~29.5%. I will try some combination of:
+more knots, more training loops, and a looser lambda.
+-I am going to include a table here of hyperparameters I tried, and the result on the training data.
+
+GAM - Cubic Splines
+| Training cycles*| Num knots   | Lambda     | Error    | Notes               |
+|-----------------|-------------|------------|----------|---------------------|
+| 4               | 5           | 0.01       | 0.2953   |
+| 4               | 10          | 0.01       | 0.2948   |
+| 10              | 10          | 0.01       | 0.2949   | Maybe I am doing something wrong
+| 10              | 10          | 0.1        | 0.2980   | Maybe this isn't the best model
+| 20              | 5           | 0.1        | 0.3072   |
+| 20              | 5           | 0.001      | 0.2942   |
+| 20              | 10          | 0.001      | 0.2907   |
+| 50              | 10          | 0.001      | 0.2907   | Interesting
+
+*Expressed as a multiple of the number of columns. So this is the number of times each function is updated.
+
+-More numerically instability past 10 knots. :/
+-TODO Additive logisitic regression

@@ -84,10 +84,15 @@ def make_D(X, k, t):
 #Forms the n x n (the n as defined above) matrix D^TD*(deltat) which is our numerical 
 #approximation of omega_ij = \int N''_j(t)N''_i(t)dt
 def make_omega(X, k, t):
-    D = make_D(X, k, t)
-    #Assuming your grid t is evenly spaced (it better be)
-    dt = t[k+1]-t[k]
-    omega = torch.transpose(D, 0, 1)@D*dt
+    D = make_D(X, k, t) + 1e-8
+    #How to best select dt? 
+    #Using the average distance as a crude estimate
+    high = torch.max(t)
+    low = torch.min(t)
+    #This is the length of t without the boundary knots
+    n = len(t) - 2*k
+    dt = (high-low)/n
+    omega = torch.transpose(D, 0, 1)@D*(dt)
     return omega
 
 #Adds boundary knots to list of knots by duplicating the first and last knot k times
@@ -125,7 +130,7 @@ def make_t(X, n):
     num_unique = len(torch.unique(X))
     n = min(n, num_unique - 1)
 
-    q = torch.tensor([i/n for i in range(n+1)])
+    q = torch.tensor([(i)/n for i in range(n+1)])
     t = torch.quantile(X, q)
     return t
 
@@ -165,13 +170,11 @@ def generate_spline_t_omega(X, Y, k, lam, t, omega):
 
 #main
 if __name__ == "__main__":
-    X, Y = generate_sine_data(100)
-
+    X, Y = torch.tensor([0,0,1,1], dtype = torch.float32), torch.tensor([0.9,1,2,2.1], dtype = torch.float32)
+    #X, Y = generate_sine_data(100)
     order = 3
     knots = 5
-    func = generate_spline(X, Y, order, knots, 0.1)
-
-    #func2 = lambda x: func(x) - 1
+    func = generate_spline(X, Y, order, knots, 0.01)
 
     Y_hat = func(X)
 

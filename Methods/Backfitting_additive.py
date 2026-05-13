@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import torch
 from General_methods import load_data, add_ones, tt_split, test, MSE, normalize_data
 from Splines import generate_spline_t_omega, make_t, add_boundary_knots, make_omega, generate_spline
+from tqdm import tqdm
 
 #Used in update loop to avoid rounding drift
 def zero_function(func, X_j):
@@ -33,27 +34,31 @@ def generate_omega_array(X, order, t):
 
 #backfitting algo
 #For now, this is just for cubic splines
-def backfit_cubic_spline(X, Y, order, num_knots, Lambda):
+def backfit_cubic_spline(X, Y, order, num_knots, Lambda, cycles):
     #Fix alpha = avgY
     alpha = torch.mean(Y)
     n = len(X[0])
     #Fix list of functions f[j] = 0 for j in [0,...,len(X[0])]
     functions = [lambda X: 0 for i in range(n)]
     #precompute list of knots t[j] for j in [0,...,len(X[0])]
-    t = generate_knot_array(X, num_knots, order)
+    #t = generate_knot_array(X, num_knots, order)
     #precompute list of omega omega[j] for j in [0,...,len(X[0])]
-    omega = generate_omega_array(X, order, t)
+    #omega = generate_omega_array(X, order, t)
 
     #loop j = 1,..,p,1,...,p until converges (or probably just a fixed number of iterates)
         # f[j] = spline((y - alpha - sum_k \ne j f[k](X[:, k])), k, t, omega)
         # f[j] = zero_function(f[j], X[:, j])
-    for i in range(n):
+    print("Running backfitting algorithm:")
+    for i in tqdm(range(cycles*n)):
         j = i%n
+        #print(j)
     
         loop_input = Y - alpha - sum(functions[k](X[:, k]) for k in range(n) if k != j)
-        functions[j] = generate_spline_t_omega(loop_input, Y, order, Lambda[j], t[j], omega[j])
+        #Precomputation of knots and derivatives is broken. IDK why it should be identical
+        #It should not be identical
+        #functions[j] = generate_spline_t_omega(loop_input, Y, order, Lambda[j], t[j], omega[j])
+        functions[j] = generate_spline(loop_input, Y, order, num_knots, Lambda[j])
         functions[j] = zero_function(functions[j], X[:,j])
-        print(j)
 
     model = lambda X: alpha + sum(functions[j](X[:, j]) for j in range(n))
     return model
@@ -69,12 +74,13 @@ train_X, means, stds = normalize_data(train_X)
 
 
 order = 3
-num_knots = 5
+num_knots = 10
+cycles = 50
 #Need to figure out how to set Lambda
 #See page 299 of ESL
-Lambda = [0.1 for i in range(len(data_X[0]))]
+Lambda = [0.001 for i in range(len(data_X[0]))]
 
-model = backfit_cubic_spline(train_X, train_Y, order, num_knots, Lambda)
+model = backfit_cubic_spline(train_X, train_Y, order, num_knots, Lambda, cycles)
 
 train_pred = model(train_X)
 train_error = test(train_Y, train_pred)

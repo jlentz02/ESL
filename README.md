@@ -20,4 +20,5 @@ To clarify it again, the purpose of this project is for my own learning, and the
 | Logisitic Regression   | 0.1893      | 0.1923     | ESL §4.4|
 | Log Reg - Grad Descent | 0.2183      | 0.2263     | ESL §4.4, a bit disappointing, Newton > GD|
 | Quadratic basis        | 0.4495      | 0.4488     | ESL §5.1, not very good either|
-| GAM - Cubic Splines*   | 0.xxxx      | 0.xxxx     | ESL §9.1, categorical variables were not splined|
+| GAM - Cubic Splines*   | 0.2907      | 0.xxxx     | ESL §9.1, categorical variables were not splined|
+| Neural net             | 0.1564      | 0.2008     | ESL §11.3
